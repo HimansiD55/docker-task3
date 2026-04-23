@@ -35,3 +35,15 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/docker-task3:${{ github.sha }}
+      - name: Send Email Notification
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+                server_address: smtp.gmail.com
+                server_port: 465
+                username: ${{ secrets.EMAIL_USERNAME }}
+                password: ${{ secrets.EMAIL_PASSWORD }}
+                subject: "CI Pipeline Status: ${{ job.status }}"
+                to: ${{ secrets.EMAIL_TO }}
+                from: ${{ secrets.EMAIL_USERNAME }}
+                body: "Pipeline finished with status: ${{ job.status }}"
