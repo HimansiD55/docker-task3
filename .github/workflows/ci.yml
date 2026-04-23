@@ -1,0 +1,31 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_to_dockerhub:
+    name: Deploy to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and tag Docker images
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/docker-task3:latest .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/docker-task3:latest ${{ secrets.DOCKERHUB_USERNAME }}/docker-task3:${{ github.run_number }}
+
+      - name: Push images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/docker-task3:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/docker-task3:${{ github.run_number }}
