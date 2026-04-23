@@ -11,8 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Debug username
+        run: echo "Username is ${{ secrets.DOCKER_USERNAME }}"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -20,12 +23,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and tag Docker images
+      - name: Build Docker image
         run: |
-          docker build . -t ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest
-          docker tag ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest ${{ secrets.DOCKER_USERNAME }}/docker-task3:${{ github.run_number }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest .
 
-      - name: Push images to Docker Hub
+      - name: Tag Docker image
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest ${{ secrets.DOCKER_USERNAME }}/docker-task3:${{ github.sha }}
+
+      - name: Push Docker images
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-task3:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-task3:${{ github.sha }}
