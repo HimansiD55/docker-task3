@@ -22,7 +22,7 @@ jobs:
 
       - name: Build and tag Docker images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest .
+          docker build . -t ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/docker-task3:latest ${{ secrets.DOCKER_USERNAME }}/docker-task3:${{ github.run_number }}
 
       - name: Push images to Docker Hub
